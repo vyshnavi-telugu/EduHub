@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EduHub Interactive Prototype</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#eef2ff;color:#172554}
+.app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.phone{width:min(430px,94vw);height:min(820px,92vh);background:#fff;border-radius:32px;box-shadow:0 24px 70px #1e293b33;overflow:hidden;position:relative}
+.top{height:72px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef2f7;background:#fff}
+.logo{font-size:22px;font-weight:800;background:linear-gradient(90deg,#2563eb,#7c3aed);-webkit-background-clip:text;color:transparent}
+.content{height:calc(100% - 132px);overflow:auto;padding:20px}
+.bottom{height:60px;position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8edf5;display:flex;justify-content:space-around;align-items:center}
+.nav{border:0;background:none;color:#64748b;font-size:11px;cursor:pointer}.nav.active{color:#4f46e5;font-weight:700}
+h1{font-size:27px;margin:4px 0 6px} h2{font-size:20px;margin:18px 0 10px} p{color:#64748b;line-height:1.45;margin:5px 0}
+.hero{background:linear-gradient(135deg,#dbeafe,#ede9fe);padding:18px;border-radius:22px;margin-bottom:16px}
+.card{background:#fff;border:1px solid #e7ebf3;border-radius:18px;padding:15px;margin:10px 0;box-shadow:0 5px 18px #3341550c;cursor:pointer}
+.row{display:flex;gap:10px;align-items:center}.icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#eef2ff;font-size:20px}
+.tag{display:inline-block;background:#eef2ff;color:#4f46e5;padding:6px 9px;border-radius:99px;font-size:11px;margin:3px}
+.progress{height:7px;background:#e9eef7;border-radius:99px;margin-top:8px}.progress i{display:block;height:100%;width:64%;border-radius:99px;background:linear-gradient(90deg,#2563eb,#8b5cf6)}
+button.primary{width:100%;border:0;border-radius:14px;padding:13px;background:linear-gradient(90deg,#2563eb,#7c3aed);color:#fff;font-weight:700;margin-top:8px;cursor:pointer}
+button.secondary{width:100%;border:1px solid #dbe2ef;border-radius:14px;padding:12px;background:#fff;color:#334155;font-weight:650;margin-top:8px;cursor:pointer}
+.back{border:0;background:none;font-size:14px;color:#4f46e5;padding:0 0 8px;cursor:pointer}
+.option{padding:12px;border:1px solid #e1e7f0;border-radius:13px;margin:8px 0;cursor:pointer}.option:hover{background:#f8faff}
+.chat{background:#f8fafc;border-radius:18px;padding:12px;margin-top:12px}.bubble{padding:11px 13px;border-radius:15px;margin:7px 0;max-width:88%;line-height:1.4}.aira{background:#e0e7ff}.user{background:#4f46e5;color:#fff;margin-left:auto}
+.small{font-size:12px}.muted{color:#94a3b8}.score{font-size:36px;font-weight:850;color:#4f46e5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid .card{margin:0}
+#toast{position:absolute;left:16px;right:16px;bottom:75px;background:#172554;color:white;padding:12px;border-radius:14px;text-align:center;display:none;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app"><div class="phone">
+<header class="top"><div class="logo">EduHub</div><div id="mode" class="small">Academic</div></header>
+<main id="screen" class="content"></main>
+<nav class="bottom">
+<button class="nav active" onclick="go('home')">🏠<br>Home</button>
+<button class="nav" onclick="go('syllabus')">📚<br>Syllabus</button>
+<button class="nav" onclick="go('aira')">🤖<br>Aira</button>
+<button class="nav" onclick="go('papers')">📄<br>Papers</button>
+<button class="nav" onclick="go('more')">•••<br>More</button>
+</nav>
+<div id="toast"></div>
+</div></div>
+<script>
+const S=document.getElementById('screen'), mode=document.getElementById('mode');
+const screens={
+home:`<div class="hero"><div class="small">Good morning 👋</div><h1>Academic EduHub</h1><p>B.Tech CSE • 1st Year • Semester 1</p><div class="tag">Personalized</div><div class="tag">AI Learning</div><div class="tag">Your language</div></div>
+<h2>Continue Learning</h2><div class="card" onclick="go('topic')"><div class="row"><div class="icon">🧠</div><div><b>DBMS — ER Model</b><p class="small">Unit 1 • 64% complete</p></div></div><div class="progress"><i></i></div></div>
+<h2>Quick Actions</h2><div class="grid"><div class="card" onclick="go('aira')">🤖<br><b>Ask Aira</b><p class="small">Explain anything</p></div><div class="card" onclick="go('practice')">📝<br><b>Practice</b><p class="small">Test yourself</p></div><div class="card" onclick="go('papers')">📄<br><b>Previous Papers</b><p class="small">Attempt & analyze</p></div><div class="card" onclick="go('notes')">🗒️<br><b>My Notes</b><p class="small">Keep learning material</p></div></div>
+<h2>Today's Progress</h2><div class="card"><b>3 of 5 goals completed</b><p>Keep going — you're building consistency.</p></div>`,
+syllabus:`<button class="back" onclick="go('home')">← Home</button><h1>My Syllabus</h1><p>JNTUA • B.Tech CSE • 1st Year</p><div class="card"><b>DBMS</b><p>5 Units • 64% overall</p><div class="progress"><i></i></div></div><div class="card" onclick="go('topic')"><b>Unit 1 — Database Fundamentals</b><p>ER Model • Relational Model • Keys</p></div><div class="card"><b>Unit 2 — SQL</b><p>Queries • Joins • Constraints</p></div><div class="card"><b>Unit 3 — Transactions</b><p>Concurrency • Recovery</p></div><div class="card"><b>Unit 4 — Normalization</b><p>FDs • Normal Forms</p></div><div class="card"><b>Unit 5 — Advanced Topics</b><p>Indexes • Security • Distributed DB</p></div>`,
+topic:`<button class="back" onclick="go('syllabus')">← DBMS / Unit 1</button><h1>Entity-Relationship Model</h1><p>Learn this topic your way.</p><div class="card" onclick="go('airaTopic')">🤖 <b>Explain with Aira</b><p>English • Telugu • Tanglish • more languages</p></div><div class="card" onclick="go('practice')">🧠 <b>Check My Understanding</b><p>Quiz and questionnaire</p></div><div class="card" onclick="go('answer')">✍️ <b>Practice an Answer</b><p>Type, photo or voice</p></div><div class="card" onclick="go('notes')">🗒️ <b>Take Running Notes</b><p>Save what you learn</p></div><div class="card" onclick="go('papers')">📄 <b>See Previous Questions</b><p>Repeated questions and patterns</p></div>`,
+airaTopic:`<button class="back" onclick="go('topic')">← Topic</button><h1>Aira</h1><p>Your AI Learning Companion</p><div class="tag">English</div><div class="tag">తెలుగు</div><div class="tag">Tanglish</div><div class="tag">Hindi</div><div class="chat"><div class="bubble aira">Hi! 👋 Let's understand <b>ER Model</b> in a simple way.</div><div class="bubble user">ER model ni Tanglish lo simple ga explain cheyyi.</div><div class="bubble aira">Sure! ER Model ante database lo real-world objects ni <b>entities</b> ga represent chesi, vatiki unna relationships ni diagram form lo chupinche method...</div></div><button class="primary" onclick="toast('Aira can continue the topic conversation')">Ask a Follow-up</button><button class="secondary" onclick="go('practice')">Now Test Me</button>`,
+practice:`<button class="back" onclick="go('topic')">← Topic</button><h1>Aira Questionnaire</h1><p>Choose how you want to test yourself.</p><div class="card"><b>Quick Quiz</b><p>5 questions • 5 minutes</p><button class="primary" onclick="go('quiz')">Start</button></div><div class="card"><b>Exam Practice</b><p>2 / 5 / 10 mark questions</p><button class="secondary" onclick="go('quiz')">Start</button></div><div class="card"><b>Previous-Year Questions</b><p>Practice questions from available papers</p><button class="secondary" onclick="go('papers')">Open Papers</button></div>`,
+quiz:`<button class="back" onclick="go('practice')">← Practice</button><h1>Quick Quiz</h1><p>Question 1 of 5 • 2 marks</p><div class="card"><b>What is an entity in an ER model?</b></div><div class="option" onclick="toast('Answer selected')">A. A real-world object or concept</div><div class="option" onclick="toast('Try again — think about what ER models represent.')">B. A database query</div><div class="option" onclick="toast('Try again')">C. A programming language</div><button class="primary" onclick="go('result')">Submit Quiz</button>`,
+result:`<button class="back" onclick="go('practice')">← Practice</button><h1>Quiz Result</h1><div class="card" style="text-align:center"><div class="score">8/10</div><b>Good understanding!</b><p>You know the core concepts. Review relationships and cardinality.</p></div><div class="card"><b>💡 Aira Feedback</b><p>Focus on the difference between entity, attribute and relationship. Then try the 5-mark question.</p></div><button class="primary" onclick="go('answer')">Practice a 5-Mark Answer</button>`,
+answer:`<button class="back" onclick="go('topic')">← Topic</button><h1>Practice Answer</h1><p>Question • Explain the ER Model with an example.</p><div class="card"><p class="muted">Type your answer, upload a handwritten photo, or use voice input.</p><div style="height:100px;border:1px dashed #cbd5e1;border-radius:12px;padding:12px">Write your answer here...</div><button class="secondary" onclick="toast('Image/voice input can be connected in the real app')">📷 Upload Photo / 🎤 Voice</button></div><button class="primary" onclick="go('evaluation')">Submit for Aira Evaluation</button>`,
+evaluation:`<button class="back" onclick="go('answer')">← Answer</button><h1>Aira Evaluation</h1><div class="card"><div class="score">7/10</div><b>Strong answer with room to improve.</b></div><div class="card"><b>✓ What you did well</b><p>Correct definition • Relevant example • Clear structure</p></div><div class="card"><b>⚠ Missing</b><p>Relationship types and cardinality were not explained.</p></div><div class="card"><b>✨ Better answer</b><p>Add relationship types, cardinality and a small ER example.</p></div><button class="primary" onclick="go('topic')">Improve & Try Again</button>`,
+papers:`<button class="back" onclick="go('home')">← Academic Home</button><h1>Previous Year Papers</h1><p>DBMS • B.Tech CSE • Semester 1</p><div class="card"><b>2025 — DBMS</b><p>3 sections • 70 marks</p><button class="secondary" onclick="go('paper')">View / Attempt</button></div><div class="card"><b>2024 — DBMS</b><p>3 sections • 70 marks</p><button class="secondary" onclick="go('paper')">View / Attempt</button></div><div class="card"><b>Paper Analysis</b><p>Repeated questions • Unit frequency • Topic patterns</p><button class="primary" onclick="go('analysis')">Analyze with Aira</button></div>`,
+paper:`<button class="back" onclick="go('papers')">← Papers</button><h1>2025 DBMS Paper</h1><div class="card"><b>Time: 3 hours • Marks: 70</b><p>Question paper preview</p><hr><p>1. Answer any five short questions.</p><p>2. Explain the ER model with a suitable example.</p><p>3. Explain normalization and normal forms.</p><p>4. Discuss transaction and concurrency control.</p></div><button class="primary" onclick="toast('Timed paper mode would start here')">Start Same-Paper Test</button>`,
+analysis:`<button class="back" onclick="go('papers')">← Papers</button><h1>Aira Paper Analysis</h1><div class="card"><b>Repeated / frequent areas</b><p>ER Model • Normalization • Transactions • SQL</p></div><div class="card"><b>Unit pattern</b><p>Unit 1 — High frequency<br>Unit 2 — High frequency<br>Unit 3 — Medium<br>Unit 4 — High</p></div><div class="card"><b>Practice recommendation</b><p>Revise ER Model and Normalization, then attempt a mixed 10-mark test.</p></div>`,
+notes:`<button class="back" onclick="go('home')">← Home</button><h1>My Notes</h1><p>Running notes and saved study material.</p><div class="card"><b>DBMS — ER Model</b><p>Entity = real-world object/concept...</p></div><div class="card"><b>Quick Revision</b><p>Cardinality • Attributes • Keys</p></div><button class="primary" onclick="toast('New note created')">＋ Add Note</button>`,
+aira:`<button class="back" onclick="go('home')">← Home</button><h1>Ask Aira</h1><p>Academic Aira understands your current course and syllabus.</p><div class="card" onclick="go('airaTopic')">🤖 <b>Explain a topic</b><p>“Explain DBMS normalization in Tanglish.”</p></div><div class="card" onclick="go('practice')">📝 <b>Give me a quiz</b></div><div class="card" onclick="go('papers')">📄 <b>Analyze previous papers</b></div><div class="card" onclick="go('notes')">🗒️ <b>Help me make notes</b></div>`,
+more:`<button class="back" onclick="go('home')">← Home</button><h1>More</h1><div class="card" onclick="go('multi')">🌐 <b>Open Multipurpose EduHub</b><p>Learn beyond academics • Explore • Connect • Create</p></div><div class="card"><b>Profile & Settings</b><p>Personal • Academic • Language • Privacy</p></div>`,
+multi:`<div class="hero"><div class="small">Beyond academics</div><h1>Multipurpose EduHub</h1><p>Learn • Explore • Connect • Create</p></div><div class="grid"><div class="card" onclick="toast('Explore topics')">🔎<br><b>Explore</b><p class="small">Learn anything</p></div><div class="card" onclick="toast('Communities')">👥<br><b>Communities</b><p class="small">Find your people</p></div><div class="card" onclick="toast('Post an idea')">💡<br><b>Ideas</b><p class="small">Share ideas</p></div><div class="card" onclick="toast('Collaboration')">🤝<br><b>Collaborate</b><p class="small">Build together</p></div></div><h2>Trending Communities</h2><div class="card"><b>🚀 Startup & Innovation</b><p>Ideas, feedback and projects</p></div><div class="card"><b>🤖 AI & Development</b><p>Build and learn together</p></div><div class="card"><b>🇮🇳 India Development</b><p>Ideas that can create impact</p></div><h2>Idea → People → Project</h2><div class="card"><b>💡 Reduce food waste in college canteens</b><p>Post an idea → discuss → find interested people → collaborate</p><button class="primary" onclick="toast('Collaboration request sent')">I'm Interested</button></div><button class="secondary" onclick="go('home')">← Back to Academic EduHub</button>`
+};
+function go(k){S.innerHTML=screens[k]||screens.home; mode.textContent=k==='multi'?'Multipurpose':'Academic'; window.scrollTo(0,0)}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',1800)}
+go('home');
+</script>
+</body>
+</html>
